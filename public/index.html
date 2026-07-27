@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Astral Dust - Interactive 3D particle simulation controlled by hand gestures">
+    <title>Astral Dust</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-orb"></div>
+            <h1 class="loading-title">Astral Dust</h1>
+            <p class="loading-status" id="loading-status">Calibrating Astral Dust...</p>
+        </div>
+    </div>
+
+    <!-- Webcam feed as full-screen background (muted required for autoplay) -->
+    <video id="webcam-video" autoplay playsinline muted></video>
+
+    <!-- Three.js transparent canvas overlaying the video -->
+    <canvas id="astral-canvas"></canvas>
+
+    <!-- UI Overlay -->
+    <div id="ui-overlay">
+        <div class="ui-top-left">
+            <h2 class="ui-title">Astral Dust</h2>
+            <p class="ui-subtitle">PARTICLE SPHERE · HAND REACTIVE</p>
+        </div>
+        <div class="ui-bottom-left" id="debug-info">
+            <div class="debug-row"><span class="debug-label">HANDS</span><span class="debug-value" id="debug-hands">0</span></div>
+            <div class="debug-row"><span class="debug-label">FINGERS</span><span class="debug-value" id="debug-fingers">0</span></div>
+            <div class="debug-row"><span class="debug-label">STATE</span><span class="debug-value" id="debug-state">idle</span></div>
+            <div class="debug-row"><span class="debug-label">CAMERA</span><span class="debug-value" id="debug-camera">on</span></div>
+        </div>
+        <div class="ui-bottom-right">
+            <div class="instruction"><span class="key">Move</span> — sphere follows your hand</div>
+            <div class="instruction"><span class="key">Pinch</span> — shrink · release to scatter</div>
+            <div class="instruction"><span class="key">Two hands</span> — spread to grow · clap to merge</div>
+        </div>
+    </div>
+
+    <!-- Main entry point -->
+    <script type="module" src="js/main.js"></script>
+
+</body>
+</html>

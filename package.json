@@ -1,0 +1,12 @@
+{
+  "name": "astral-dust",
+  "version": "1.0.0",
+  "description": "Interactive 3D particle simulation with hand tracking",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
