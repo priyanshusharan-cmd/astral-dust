@@ -118,6 +118,9 @@ function getHandPositions() {
         handPositions.push({ palm, palmSpan, fingertips });
     }
 
+    // Sort hands left-to-right by screen X coordinate so Hand 0 and Hand 1 never swap randomly across frames!
+    handPositions.sort((a, b) => a.palm.x - b.palm.x);
+
     return smoothHandPositions(handPositions);
 }
 
@@ -167,7 +170,18 @@ function getHandCount() {
  * Returns total detected fingertips count for debug display.
  */
 function getFingerCount() {
-    return rawHandData.length * 5;
+    let openFingers = 0;
+    for (const hand of previousSmoothed) {
+        for (let f = 0; f < 5; f++) {
+            const tip = hand.fingertips[f];
+            const dx = tip.x - hand.palm.x;
+            const dy = tip.y - hand.palm.y;
+            if (Math.sqrt(dx * dx + dy * dy) > 0.22) {
+                openFingers++;
+            }
+        }
+    }
+    return openFingers;
 }
 
 export { initHandTracking, detectHands, getHandPositions, getHandCount, getFingerCount };
