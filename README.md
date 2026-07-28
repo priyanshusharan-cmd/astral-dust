@@ -1,4 +1,5 @@
 <div align="center">
+  <img src="public/logo.png" alt="Astral Dust Logo" width="180" height="180" style="border-radius: 20%; margin-bottom: 20px;" />
   <h1>✨ Astral Dust ✨</h1>
   <p><b>An interactive, hand-reactive 3D particle sphere built with Three.js and MediaPipe.</b></p>
   
@@ -66,5 +67,6 @@ To run Astral Dust locally on your machine:
 ---
 
 <div align="center">
-  <p>Built with 🤍 using Three.js & MediaPipe.</p>
+  <p>Crafted with ❤️ by <b>Priyanshu Sharan</b></p>
+  <p>Built using Three.js & MediaPipe.</p>
 </div>
