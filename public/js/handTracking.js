@@ -118,8 +118,9 @@ function getHandPositions() {
         handPositions.push({ palm, palmSpan, fingertips });
     }
 
-    // Sort hands left-to-right by screen X coordinate so Hand 0 and Hand 1 never swap randomly across frames!
-    handPositions.sort((a, b) => a.palm.x - b.palm.x);
+    // Sort hands so index 0 is always the LEFT hand on the mirrored screen (raw x near 1.0), and index 1 is the RIGHT hand (raw x near 0.0).
+    // This fixes the 'opposite direction' issue where gestures were being assigned backwards!
+    handPositions.sort((a, b) => b.palm.x - a.palm.x);
 
     return smoothHandPositions(handPositions);
 }

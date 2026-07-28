@@ -39,20 +39,27 @@
 
     <!-- UI Overlay -->
     <div id="ui-overlay">
-        <div class="ui-top-left">
+        <div class="ui-panel ui-top-left">
             <h2 class="ui-title">Astral Dust</h2>
-            <p class="ui-subtitle">PARTICLE SPHERE · HAND REACTIVE</p>
+            <p class="ui-subtitle">PARTICLE SPHERE <span style="opacity:0.4; margin: 0 4px;">|</span> HAND REACTIVE</p>
         </div>
-        <div class="ui-bottom-left" id="debug-info">
+        <div class="ui-panel ui-bottom-left" id="debug-info">
             <div class="debug-row"><span class="debug-label">HANDS</span><span class="debug-value" id="debug-hands">0</span></div>
             <div class="debug-row"><span class="debug-label">FINGERS</span><span class="debug-value" id="debug-fingers">0</span></div>
             <div class="debug-row"><span class="debug-label">STATE</span><span class="debug-value" id="debug-state">idle</span></div>
-            <div class="debug-row"><span class="debug-label">CAMERA</span><span class="debug-value" id="debug-camera">on</span></div>
+            <div class="debug-row" id="camera-toggle-row" title="Click or press 'C' to toggle">
+                <span class="debug-label">CAMERA</span>
+                <div class="toggle-container">
+                    <div class="toggle-switch active" id="camera-toggle-switch">
+                        <div class="toggle-knob"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="ui-bottom-right">
-            <div class="instruction"><span class="key">Move</span> — sphere follows your hand</div>
-            <div class="instruction"><span class="key">Pinch</span> — shrink · release to scatter</div>
-            <div class="instruction"><span class="key">Two hands</span> — spread to grow · clap to merge</div>
+        <div class="ui-panel ui-bottom-right">
+            <div class="instruction"><span class="key">Move</span> <span class="desc">Tracks hand movement</span></div>
+            <div class="instruction"><span class="key">Pinch</span> <span class="desc">Compress sphere, release to scatter</span></div>
+            <div class="instruction"><span class="key">Two hands</span> <span class="desc">Spread to expand, bring together to merge</span></div>
         </div>
     </div>
 

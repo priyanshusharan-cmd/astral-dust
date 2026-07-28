@@ -114,6 +114,7 @@ export {
     cloudOffsets,
     positions,
     velocities,
+    colors,
     geometry,
     pointsMesh,
     PARTICLE_COUNT,

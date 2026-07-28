@@ -93,6 +93,13 @@ function sampleWebcamColors() {
     if (colorSampleFrame % 15 !== 0) return;
     if (!videoElement || videoElement.readyState < 2) return;
 
+    // When the camera feed is manually toggled off by the user, smoothly revert to the warm Golden color
+    if (videoElement.style.opacity === '0') {
+        targetHue = 35;
+        avgBrightness = 50; // Forces darker room (warm/gold) saturation/lightness settings
+        return;
+    }
+
     try {
         samplingCtx.drawImage(videoElement, 0, 0, 32, 32);
         const imgData = samplingCtx.getImageData(0, 0, 32, 32).data;
@@ -268,9 +275,12 @@ function updateDebugUI(state, visualForm) {
     debugHands.textContent = getHandCount();
     debugFingers.textContent = getFingerCount();
 
-    // Clean up form text so split states appear as clean dot notation (e.g., "sphere · cloud") instead of coding terms
-    const cleanForm = visualForm.replace(/^SPLIT_/, '').replaceAll('_', ' · ').toLowerCase();
-    debugState.textContent = `${state.toLowerCase()} · ${cleanForm}`;
+    // Clean up state text so TWO_HAND becomes "two hands", etc.
+    const cleanState = state.toLowerCase().replaceAll('_', ' ').replace('two hand', 'two hands');
+    
+    // Clean up form text so split states appear cleanly without tech symbols
+    const cleanForm = visualForm.replace(/^SPLIT_/, '').replaceAll('_', ', ').toLowerCase().replace('two hand', 'two hands');
+    debugState.textContent = `${cleanState} \u00a0|\u00a0 ${cleanForm}`;
 
     // Color-code the state with crisp, vibrant neon colors that pop on dark glass HUD cards
     const stateColors = {
@@ -285,5 +295,36 @@ function updateDebugUI(state, visualForm) {
     debugState.style.color = stateColors[state] || '#ffffff';
 }
 
+// Camera Toggle Logic
+function initCameraToggle() {
+    const row = document.getElementById('camera-toggle-row');
+    const toggleSwitch = document.getElementById('camera-toggle-switch');
+    const video = document.getElementById('webcam-video');
+    
+    function toggleCamera() {
+        if (video.style.opacity === '0') {
+            video.style.opacity = '1';
+            if (toggleSwitch) toggleSwitch.classList.add('active');
+        } else {
+            video.style.opacity = '0';
+            if (toggleSwitch) toggleSwitch.classList.remove('active');
+        }
+    }
+
+    if (row) row.addEventListener('click', toggleCamera);
+    if (toggleSwitch) toggleSwitch.addEventListener('click', (e) => {
+        // Prevent double trigger if they click exactly on the switch vs the row
+        e.stopPropagation();
+        toggleCamera();
+    });
+    
+    window.addEventListener('keydown', (e) => {
+        if (e.key.toLowerCase() === 'c') {
+            toggleCamera();
+        }
+    });
+}
+
 // Start
+initCameraToggle();
 init();

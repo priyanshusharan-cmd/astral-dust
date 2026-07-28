@@ -45,7 +45,7 @@ function updatePhysics(
             const dz = positions[idx + 2] - origin.z;
             const dist = Math.sqrt(dx * dx + dy * dy + dz * dz) || 0.1;
 
-            const force = SCATTER_FORCE * (0.8 + Math.random() * 1.0);
+            const force = (state === 'SPLIT' || state === 'TWO_HAND') ? (SCATTER_FORCE * 0.08) : (SCATTER_FORCE * (0.8 + Math.random() * 1.0));
 
             velocities[idx]     += (dx / dist) * force;
             velocities[idx + 1] += (dy / dist) * force;
@@ -97,6 +97,23 @@ function updatePhysics(
             const center = isHand1 ? hand1Center : hand2Center;
             const parts = visualForm.split('_');
             const halfForm = isHand1 ? (parts[1] || 'CLOUD') : (parts[2] || 'CLOUD');
+
+            if (scatterTimer > 30 && halfForm === 'CLOUD') {
+                if (positions[idx] > LIMIT_X)  { positions[idx] = LIMIT_X;  velocities[idx] *= -0.75; }
+                if (positions[idx] < -LIMIT_X) { positions[idx] = -LIMIT_X; velocities[idx] *= -0.75; }
+                if (positions[idx + 1] > LIMIT_Y)  { positions[idx + 1] = LIMIT_Y;  velocities[idx + 1] *= -0.75; }
+                if (positions[idx + 1] < -LIMIT_Y) { positions[idx + 1] = -LIMIT_Y; velocities[idx + 1] *= -0.75; }
+                if (positions[idx + 2] > LIMIT_Z)  { positions[idx + 2] = LIMIT_Z;  velocities[idx + 2] *= -0.75; }
+                if (positions[idx + 2] < -LIMIT_Z) { positions[idx + 2] = -LIMIT_Z; velocities[idx + 2] *= -0.75; }
+
+                velocities[idx]     *= SCATTER_DAMPING;
+                velocities[idx + 1] *= SCATTER_DAMPING;
+                velocities[idx + 2] *= SCATTER_DAMPING;
+                positions[idx]     += velocities[idx];
+                positions[idx + 1] += velocities[idx + 1];
+                positions[idx + 2] += velocities[idx + 2];
+                continue;
+            }
 
             const isSphereHalf = (halfForm === 'SPHERE' || halfForm === 'PINCH');
             const offsets = isSphereHalf ? unitOffsets : cloudOffsets;

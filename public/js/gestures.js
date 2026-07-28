@@ -45,6 +45,9 @@ let wasPinching2 = false;
 let pinchHoldCount = 0;
 let pinchHoldCount1 = 0;
 let pinchHoldCount2 = 0;
+let pinchReleaseCount = 0;
+let pinchReleaseCount1 = 0;
+let pinchReleaseCount2 = 0;
 let recentPinch1 = 0;                // 15-frame tolerance for simultaneous two-hand release
 let recentPinch2 = 0;
 let mergeTargetHand = 0;             // 0=normal split, 1=merge all to hand 1, 2=merge all to hand 2
@@ -54,6 +57,9 @@ let scatterTimer = 0;
 let fistCooldown = 0;                // Suppresses pinches while opening fist
 let fistCooldown1 = 0;
 let fistCooldown2 = 0;
+let fistHoldCount = 0;
+let fistHoldCount1 = 0;
+let fistHoldCount2 = 0;
 const SCATTER_DURATION = 140;        // ~2.3s at 60fps for majestic floating
 
 let hand1Center = new THREE.Vector3();
@@ -86,9 +92,10 @@ function fingerToPalmDist(hand, fingerIdx) {
 /**
  * FIST = ALL four non-thumb fingers (index, middle, ring, pinky) are curled
  * close to the palm. Thumb doesn't matter (it often sticks out in a natural fist).
+ * Uses dynamic depth scaling based on palmSpan so fist detection works reliably across all camera distances.
  */
 function isFist(hand) {
-    const CURL_THRESHOLD = 0.26;
+    const CURL_THRESHOLD = 0.16;
     let curledCount = 0;
     // Check index(1), middle(2), ring(3), pinky(4)
     for (let f = 1; f < 5; f++) {
@@ -96,31 +103,18 @@ function isFist(hand) {
             curledCount++;
         }
     }
-    // At least 3 of 4 fingers curled reliably detects fists across all camera distances!
-    return curledCount >= 3;
+    return curledCount >= 4;
 }
 
 /**
- * PINCH = thumb+index touching, but at least 2 of the remaining 3 fingers
- * (middle, ring, pinky) are OPEN/EXTENDED — NOT curled into the palm.
- * This prevents a closed fist from being detected as a pinch!
+ * PINCH = thumb+index touching.
+ * Uses dynamic depth scaling based on palmSpan and generous hysteresis when holding an existing pinch
+ * so it never breaks from minor finger shifts or camera tracking noise.
  */
-function isPinchGesture(hand) {
+function isPinchGesture(hand, isAlreadyPinching = false) {
     const pinchDist = getPinchDistance(hand);
-    if (pinchDist >= PINCH_THRESHOLD) return false;
-
-    // Check that other fingers are open (not a closed fist!)
-    // We use 0.11 so holding a squeeze pinch doesn't fail when sitting back or when tendons curve remaining fingers!
-    const OPEN_THRESHOLD = 0.11;
-    let openCount = 0;
-    // middle(2), ring(3), pinky(4)
-    for (let f = 2; f < 5; f++) {
-        if (fingerToPalmDist(hand, f) >= OPEN_THRESHOLD) {
-            openCount++;
-        }
-    }
-    // At least 2 of middle/ring/pinky must be open for a true pinch
-    return openCount >= 2;
+    const threshold = isAlreadyPinching ? 0.13 : 0.095;
+    return pinchDist < threshold;
 }
 
 function getPinchMidpoint3D(hand) {
@@ -184,6 +178,11 @@ function updateGestures(handData) {
             visualForm = 'CLOUD';
             if (scatterTimer > 0) scatterTimer--;
             wasPinching = false;
+            wasPinching1 = false;
+            wasPinching2 = false;
+            pinchReleaseCount = 0;
+            pinchReleaseCount1 = 0;
+            pinchReleaseCount2 = 0;
         }
         return finish();
     }
@@ -195,17 +194,31 @@ function updateGestures(handData) {
         const hand = handData[0];
         const palm3D = mapToWorldSpace(hand.palm);
 
-        // ── CHECK FIST FIRST! (before pinch — prevents confusion) ──
-        const fist = isFist(hand);
+        // ── CHECK FIST FIRST! (so making a closed fist to turn cloud into sphere is never overridden by pinch!) ──
+        const rawFist = isFist(hand);
+        if (rawFist) fistHoldCount++; else fistHoldCount = 0;
+        const fist = fistHoldCount >= 3;
         if (fist) fistCooldown = 15;
         if (fistCooldown > 0) fistCooldown--;
-        const rawPinch = !fist && (fistCooldown === 0) && isPinchGesture(hand);
-        if (rawPinch) pinchHoldCount++; else pinchHoldCount = 0;
-        const pinch = rawPinch;
+
+        if (rawFist || fist) {
+            wasPinching = false;
+            pinchHoldCount = 0;
+        }
+
+        const rawPinch = !fist && !rawFist && (fistCooldown === 0) && isPinchGesture(hand, wasPinching);
+        if (rawPinch) {
+            pinchHoldCount++;
+            pinchReleaseCount = 0;
+        } else {
+            pinchHoldCount = 0;
+            if (wasPinching) pinchReleaseCount++;
+        }
+        const pinch = (rawPinch && pinchHoldCount >= 6) || (wasPinching && pinchReleaseCount < 2);
         const pinchDist = getPinchDistance(hand);
 
         // ── 1. Just released pinch → BIG BANG scatter! ──
-        if (wasPinching && !pinch) {
+        if (wasPinching && !pinch && !fist && !rawFist) {
             state = 'SCATTER';
             visualForm = 'CLOUD';   // After scatter, it's all clouds!
             isSphereHalf1 = false;
@@ -213,6 +226,7 @@ function updateGestures(handData) {
             scatterTriggered = true;
             scatterTimer = SCATTER_DURATION;
             wasPinching = false;
+            pinchReleaseCount = 0;
             return finish();
         }
 
@@ -224,7 +238,7 @@ function updateGestures(handData) {
         }
 
         // ── 3. Scatter timer still running (and showing open palm or no gesture) ──
-        if (scatterTimer > 0) {
+        if (scatterTimer > 0 && visualForm === 'CLOUD') {
             if (!pinch && !fist && scatterTimer <= 30) {
                 // Showing an open palm after initial explosion (grace period finished): gather cloud to palm!
                 scatterTimer = 0;
@@ -233,17 +247,20 @@ function updateGestures(handData) {
                 scatterTimer--;
                 return finish();
             }
+        } else if (scatterTimer > 0) {
+            scatterTimer = 0;
         }
 
         // ── 4. Fist detected: condense cloud into sphere ──
-        if (fist && !wasPinching) {
+        if (fist || (rawFist && visualForm === 'CLOUD')) {
             scatterTimer = 0;
             state = 'FOLLOW';
             visualForm = 'SPHERE';
             isSphereHalf1 = true;
             isSphereHalf2 = true;
             targetCenter.copy(palm3D);
-            targetScale = 0.65;
+            targetScale = 0.85;
+            wasPinching = false;
             return finish();
         }
 
@@ -251,8 +268,8 @@ function updateGestures(handData) {
         if (pinch) {
             state = 'PINCH';
             targetCenter.copy(getPinchMidpoint3D(hand));
-            targetScale = Math.max(0.06, (pinchDist / PINCH_THRESHOLD) * 0.3);
-            if (pinchHoldCount >= 2) wasPinching = true;
+            targetScale = Math.max(0.06, Math.min(pinchDist * 1.5, 0.15));
+            wasPinching = true;
             scatterTimer = 0;
             return finish();
         }
@@ -266,13 +283,15 @@ function updateGestures(handData) {
                 isSphereHalf1 = true;
                 isSphereHalf2 = true;
                 targetCenter.copy(palm3D);
-                targetScale = 0.65;
+                sphereCenter.copy(palm3D); // Snap center so the vanished sphere flies all the way to this palm!
+                targetScale = 0.85;
             } else {
                 state = 'GATHER';
                 visualForm = 'CLOUD';
                 isSphereHalf1 = false;
                 isSphereHalf2 = false;
                 targetCenter.copy(palm3D);
+                sphereCenter.copy(palm3D); // Snap center so the vanished cloud flies all the way to this palm!
                 targetScale = 0.45;
             }
             return finish();
@@ -281,7 +300,7 @@ function updateGestures(handData) {
         // ── 7. Normal SPHERE mode: follows open palm ──
         state = 'FOLLOW';
         targetCenter.copy(palm3D);
-        targetScale = 1.0;
+        targetScale = 0.85;
         return finish();
     }
 
@@ -296,26 +315,36 @@ function updateGestures(handData) {
         const p2 = mapToWorldSpace(h2.palm);
         const dist3D = p1.distanceTo(p2);
 
-        const fist1 = isFist(h1);
-        const fist2 = isFist(h2);
+        const rawFist1 = isFist(h1);
+        const rawFist2 = isFist(h2);
+        if (rawFist1) fistHoldCount1++; else fistHoldCount1 = 0;
+        if (rawFist2) fistHoldCount2++; else fistHoldCount2 = 0;
+        const fist1 = fistHoldCount1 >= 3;
+        const fist2 = fistHoldCount2 >= 3;
         if (fist1) fistCooldown1 = 15;
         if (fist2) fistCooldown2 = 15;
         if (fistCooldown1 > 0) fistCooldown1--;
         if (fistCooldown2 > 0) fistCooldown2--;
-        const rawPinch1 = !fist1 && (fistCooldown1 === 0) && isPinchGesture(h1);
-        const rawPinch2 = !fist2 && (fistCooldown2 === 0) && isPinchGesture(h2);
-        if (rawPinch1) pinchHoldCount1++; else pinchHoldCount1 = 0;
-        if (rawPinch2) pinchHoldCount2++; else pinchHoldCount2 = 0;
-        const pinch1 = rawPinch1;
-        const pinch2 = rawPinch2;
+
+        if (rawFist1 || fist1) { wasPinching1 = false; pinchHoldCount1 = 0; }
+        if (rawFist2 || fist2) { wasPinching2 = false; pinchHoldCount2 = 0; }
+
+        const rawPinch1 = !fist1 && !rawFist1 && (fistCooldown1 === 0) && isPinchGesture(h1, wasPinching1);
+        const rawPinch2 = !fist2 && !rawFist2 && (fistCooldown2 === 0) && isPinchGesture(h2, wasPinching2);
+        if (rawPinch1) { pinchHoldCount1++; pinchReleaseCount1 = 0; } else { pinchHoldCount1 = 0; if (wasPinching1) pinchReleaseCount1++; }
+        if (rawPinch2) { pinchHoldCount2++; pinchReleaseCount2 = 0; } else { pinchHoldCount2 = 0; if (wasPinching2) pinchReleaseCount2++; }
+        const pinch1 = (rawPinch1 && pinchHoldCount1 >= 2) || (wasPinching1 && pinchReleaseCount1 < 1);
+        const pinch2 = (rawPinch2 && pinchHoldCount2 >= 2) || (wasPinching2 && pinchReleaseCount2 < 1);
 
         if (pinch1 || wasPinching1) recentPinch1 = 15; else if (recentPinch1 > 0) recentPinch1--;
         if (pinch2 || wasPinching2) recentPinch2 = 15; else if (recentPinch2 > 0) recentPinch2--;
 
-        // ── 1. If clapping/merging palms together → unified compressed sphere! ──
+        // ── 1. If clapping/merging palms together → combine and form the sphere! ──
         if (palmDist < CLAP_THRESHOLD) {
             wasPinching1 = false;
             wasPinching2 = false;
+            pinchReleaseCount1 = 0;
+            pinchReleaseCount2 = 0;
             state = 'TWO_HAND';
             visualForm = 'SPHERE';
             isSphereHalf1 = true;
@@ -325,46 +354,56 @@ function updateGestures(handData) {
             return finish();
         }
 
-        // ── 2. Both hands just released pinches simultaneously (within 250ms window) → BIG BANG scatter! ──
-        if (palmDist >= 0.28 && recentPinch1 > 0 && !pinch1 && recentPinch2 > 0 && !pinch2) {
-            state = 'SCATTER';
-            visualForm = 'CLOUD';
-            isSphereHalf1 = false;
-            isSphereHalf2 = false;
-            scatterTriggered = 3;
-            scatterTimer = SCATTER_DURATION;
-            wasPinching1 = false;
-            wasPinching2 = false;
-            recentPinch1 = 0;
-            recentPinch2 = 0;
-            return finish();
+        // ── 2 & 3. Released pinch in two-palm mode → transition that hand from sphere to cloud with a little gentle nearby scatter! ──
+        // ── 2 & 3. Released pinch in two-palm mode → transition that hand from sphere to cloud with a little gentle nearby scatter! ──
+        const released1 = (palmDist >= CLAP_THRESHOLD && wasPinching1 && !pinch1 && !fist1 && !rawFist1);
+        const released2 = (palmDist >= CLAP_THRESHOLD && wasPinching2 && !pinch2 && !fist2 && !rawFist2);
+
+        if (state === 'TWO_HAND') {
+            // To break the unified sphere, MUST release both hands together! (Using a strict 6-frame window instead of 15)
+            const strictRecent2 = (pinch2 || wasPinching2 || recentPinch2 > 9);
+            const strictRecent1 = (pinch1 || wasPinching1 || recentPinch1 > 9);
+            const bothReleasing = (released1 && strictRecent2) || (released2 && strictRecent1) || (released1 && released2);
+            
+            if (bothReleasing) {
+                wasPinching1 = false;
+                wasPinching2 = false;
+                pinchReleaseCount1 = 0;
+                pinchReleaseCount2 = 0;
+                isSphereHalf1 = false;
+                isSphereHalf2 = false;
+                scatterTriggered = 3;
+            }
+        } else {
+            // Already split, so hands can independently scatter into clouds
+            if (released1) {
+                wasPinching1 = false;
+                pinchReleaseCount1 = 0;
+                isSphereHalf1 = false;
+                scatterTriggered = (scatterTriggered === 2) ? 3 : 1;
+            }
+            if (released2) {
+                wasPinching2 = false;
+                pinchReleaseCount2 = 0;
+                isSphereHalf2 = false;
+                scatterTriggered = (scatterTriggered === 1) ? 3 : 2;
+            }
         }
 
-        // ── 3. One hand just released a pinch → scatter into a cloud on that hand! ──
-        // (In unified TWO_HAND sphere mode, if ONLY ONE hand pinched and released, ignore it so nothing happens!)
-        const ignoreSingle1 = (state === 'TWO_HAND' && recentPinch2 === 0);
-        const ignoreSingle2 = (state === 'TWO_HAND' && recentPinch1 === 0);
-
-        if (!ignoreSingle1 && palmDist >= 0.28 && wasPinching1 && !pinch1) {
-            scatterTriggered = 1;
-            wasPinching1 = false;
-            isSphereHalf1 = false; // Bursts out Hand 1 back to cloud!
-        } else if (!ignoreSingle2 && palmDist >= 0.28 && wasPinching2 && !pinch2) {
-            scatterTriggered = 2;
-            wasPinching2 = false;
-            isSphereHalf2 = false; // Bursts out Hand 2 back to cloud!
-        }
-
-        // Update pinch history (require holding for >= 2 frames to avoid transient 1-frame glitches!)
-        if (pinchHoldCount1 >= 2) wasPinching1 = true; else if (!pinch1) wasPinching1 = false;
-        if (pinchHoldCount2 >= 2) wasPinching2 = true; else if (!pinch2) wasPinching2 = false;
+        // Update pinch history
+        if (pinch1) wasPinching1 = true; else if (!pinch1) wasPinching1 = false;
+        if (pinch2) wasPinching2 = true; else if (!pinch2) wasPinching2 = false;
 
         if (scatterTimer > 0) {
-            scatterTimer--;
+            if (visualForm === 'SPHERE' && isSphereHalf1 && isSphereHalf2) {
+                scatterTimer = 0;
+            } else {
+                scatterTimer--;
+            }
         }
 
-        // ── 4. If currently a CLOUD (or already SPLIT) + 2 palms apart → SPLIT into two halves! ──
-        if ((visualForm === 'CLOUD' || visualForm.startsWith('SPLIT')) && palmDist >= CLAP_THRESHOLD) {
+        // ── 4. If currently a CLOUD (or already SPLIT, or a hand pinched out) → SPLIT into two halves! ──
+        if (visualForm !== 'SPHERE' || !isSphereHalf1 || !isSphereHalf2) {
             if (visualForm === 'CLOUD') {
                 isSphereHalf1 = false;
                 isSphereHalf2 = false;
