@@ -68,5 +68,4 @@ To run Astral Dust locally on your machine:
 
 <div align="center">
   <p>Crafted with ❤️ by <b>Priyanshu Sharan</b></p>
-  <p>Built using Three.js & MediaPipe.</p>
 </div>
