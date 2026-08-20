@@ -2,11 +2,9 @@
   <img src="public/logo.png" alt="Astral Dust Logo" width="180" height="180" style="border-radius: 20%; margin-bottom: 20px;" />
   <h1>✨ Astral Dust ✨</h1>
   <p><b>An interactive, hand-reactive 3D particle sphere built with Three.js and MediaPipe.</b></p>
-  
-  <p>
-    <img src="demo.gif" width="800" alt="Astral Dust Demo Video" />
-  </p>
 </div>
+
+https://github.com/priyanshusharan-cmd/astral-dust/raw/main/demo.mp4
 
 <br/>
 
