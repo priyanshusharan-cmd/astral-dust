@@ -4,10 +4,8 @@
   <p><b>An interactive, hand-reactive 3D particle sphere built with Three.js and MediaPipe.</b></p>
   
   <p>
-    <!-- VIDEO PLACEHOLDER: Paste your GitHub video link inside the src="" below -->
-    <video src="PASTE_YOUR_GITHUB_VIDEO_LINK_HERE.mp4" autoplay loop muted playsinline width="100%" style="border-radius: 12px; max-width: 800px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"></video>
+    <video src="https://github.com/priyanshusharan-cmd/astral-dust/raw/main/demo.mp4" autoplay loop muted playsinline width="100%" style="border-radius: 12px; max-width: 800px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"></video>
   </p>
-  <p><i>(Replace the video placeholder above by dragging and dropping your MP4 into the GitHub editor!)</i></p>
 </div>
 
 <br/>

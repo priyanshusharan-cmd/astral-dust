@@ -3,10 +3,27 @@
   "version": "1.0.0",
   "description": "Interactive 3D particle simulation with hand tracking",
   "main": "server.js",
+  "bin": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "pkg . --out-path dist"
+  },
+  "pkg": {
+    "assets": [
+      "public/**/*"
+    ],
+    "targets": [
+      "node18-macos-arm64",
+      "node18-macos-x64",
+      "node18-win-x64",
+      "node18-linux-x64"
+    ]
   },
   "dependencies": {
-    "express": "^4.21.0"
+    "express": "^4.21.0",
+    "open": "^11.0.1"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
   }
 }
