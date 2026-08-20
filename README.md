@@ -4,7 +4,9 @@
   <p><b>An interactive, hand-reactive 3D particle sphere built with Three.js and MediaPipe.</b></p>
 </div>
 
-https://github.com/user-attachments/assets/03a3d798-c767-41ad-aa35-2ba6caf824fa
+<div align="center">
+  <video src="https://github.com/user-attachments/assets/03a3d798-c767-41ad-aa35-2ba6caf824fa" width="800" autoplay loop muted playsinline></video>
+</div>
 
 <br/>
 
