@@ -4,7 +4,7 @@
   <p><b>An interactive, hand-reactive 3D particle sphere built with Three.js and MediaPipe.</b></p>
 </div>
 
-https://github.com/priyanshusharan-cmd/astral-dust/raw/main/demo.mp4
+https://github.com/user-attachments/assets/03a3d798-c767-41ad-aa35-2ba6caf824fa
 
 <br/>
 
