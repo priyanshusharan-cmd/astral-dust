@@ -3,7 +3,9 @@
   <h1>✨ Astral Dust ✨</h1>
   <p><b>An interactive, hand-reactive 3D particle sphere built with Three.js and MediaPipe.</b></p>
   
-  <video src="demo.mp4" autoplay loop muted playsinline width="100%" style="border-radius: 12px; max-width: 800px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"></video>
+  <p>
+    <img src="demo.gif" width="800" alt="Astral Dust Demo Video" />
+  </p>
 </div>
 
 <br/>
