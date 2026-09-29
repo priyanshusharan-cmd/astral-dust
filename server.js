@@ -6,18 +6,20 @@ async function startServer() {
     const open = (await import('open')).default;
     
     const app = express();
-    const PORT = 3000;
+    const PORT = process.env.PORT || 3000;
 
     // Serve all static files from the public directory
     app.use(express.static(path.join(__dirname, 'public')));
 
     app.listen(PORT, async () => {
-        console.log(`✦ Astral Dust running at http://localhost:${PORT}`);
-        try {
-            await open(`http://localhost:${PORT}`);
-            console.log('Opened browser tab automatically.');
-        } catch (err) {
-            console.error('Failed to open browser:', err);
+        console.log(`✦ Astral Dust running at port ${PORT}`);
+        if (process.env.NODE_ENV !== 'production') {
+            try {
+                await open(`http://localhost:${PORT}`);
+                console.log('Opened browser tab automatically.');
+            } catch (err) {
+                console.error('Failed to open browser:', err);
+            }
         }
     });
 }
