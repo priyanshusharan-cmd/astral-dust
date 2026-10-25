@@ -24,6 +24,8 @@
 </sub>
 </div>
 
+<br/>
+
 <img src="assets/divider.svg" width="100%" alt="" />
 
 ## ✦ See it move
@@ -125,12 +127,11 @@ Every frame runs the same short loop: read the webcam, find the hands, decide th
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#11141B','primaryTextColor':'#FFE9C2','primaryBorderColor':'#FFC46B','lineColor':'#FFC46B','secondaryColor':'#0B0D12','tertiaryColor':'#0B0D12','fontFamily':'monospace'}}}%%
 flowchart LR
-    A["📷 Webcam<br/>1280×720"] --> B["🖐 MediaPipe<br/>21 landmarks × 2 hands"]
-    B --> C["🧭 Coordinate mapper<br/>screen → world space"]
-    C --> D["🧠 Gesture state machine<br/>pinch · fist · clap · spread"]
-    D --> E["⚛️ Spring physics<br/>3,200 particles"]
-    E --> F["✨ Three.js + bloom<br/>over the live video"]
-    A -. "colour sampling" .-> F
+    A["📷 Webcam"] --> B["🖐 MediaPipe<br/>21 landmarks"]
+    B --> C["🧠 Gestures<br/>state machine"]
+    C --> D["⚛️ Physics<br/>3,200 springs"]
+    D --> E["✨ Three.js<br/>+ bloom"]
+    A -. "colour sampling" .-> E
 ```
 
 <details>
