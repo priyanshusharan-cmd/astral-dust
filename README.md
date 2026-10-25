@@ -1,44 +1,28 @@
 <div align="center">
-
-<a href="https://astral-dust.onrender.com">
-  <img src="assets/banner.svg" alt="Astral Dust — bend 3,200 particles of stardust with your bare hands" width="100%" />
-</a>
-
-<br/>
-
-<img src="https://readme-typing-svg.demolab.com?font=Space+Mono&size=17&duration=3000&pause=1100&color=FFC46B&center=true&vCenter=true&width=620&lines=Wave+your+hand.+Bend+the+cosmos.;Pinch+to+compress.+Release+to+go+supernova.;3%2C200+particles.+Zero+controllers.;Runs+entirely+in+your+browser." alt="Wave your hand. Bend the cosmos." />
-
-<br/><br/>
-
-<a href="https://astral-dust.onrender.com"><img src="https://img.shields.io/badge/Launch_Live_Demo-FFC46B?style=for-the-badge&logo=googlechrome&logoColor=0B0D12" alt="Launch live demo" /></a>
-&nbsp;
+<a href="https://astral-dust.onrender.com"><img src="assets/banner.svg" alt="Astral Dust — bend 3,200 particles of stardust with your bare hands" width="100%" /></a>
+<img src="https://readme-typing-svg.demolab.com?font=Space+Mono&size=17&duration=3000&pause=1100&color=FFC46B&center=true&vCenter=true&width=620&height=36&lines=Wave+your+hand.+Bend+the+cosmos.;Pinch+to+compress.+Release+to+go+supernova.;3%2C200+particles.+Zero+controllers.;Runs+entirely+in+your+browser." alt="Wave your hand. Bend the cosmos." />
+<p>
+<a href="https://astral-dust.onrender.com"><img src="https://img.shields.io/badge/Launch_Live_Demo-FFC46B?style=for-the-badge&logo=googlechrome&logoColor=0B0D12" alt="Launch live demo" /></a>&nbsp;
 <a href="https://github.com/priyanshusharan-cmd/astral-dust/releases/latest"><img src="https://img.shields.io/badge/Download_App-0B0D12?style=for-the-badge&logo=github&logoColor=FFC46B" alt="Download the desktop app" /></a>
-
-<br/><br/>
-
+</p>
+<p>
 <a href="https://github.com/priyanshusharan-cmd/astral-dust/releases/latest"><img src="https://img.shields.io/github/v/release/priyanshusharan-cmd/astral-dust?style=flat-square&color=FFC46B&labelColor=0B0D12&label=release" alt="Latest release" /></a>
 <a href="https://astral-dust.onrender.com"><img src="https://img.shields.io/website?url=https%3A%2F%2Fastral-dust.onrender.com&style=flat-square&labelColor=0B0D12&up_color=FFC46B&up_message=online&label=live%20demo" alt="Live demo status" /></a>
 <a href="LICENSE"><img src="https://img.shields.io/github/license/priyanshusharan-cmd/astral-dust?style=flat-square&color=67E8F9&labelColor=0B0D12" alt="MIT license" /></a>
-
 <img src="https://img.shields.io/badge/Three.js-r170-FFC46B?style=flat-square&logo=threedotjs&logoColor=FFC46B&labelColor=0B0D12" alt="Three.js r170" />
 <img src="https://img.shields.io/badge/MediaPipe-Hand_Landmarker-FFC46B?style=flat-square&logo=google&logoColor=FFC46B&labelColor=0B0D12" alt="MediaPipe Hand Landmarker" />
 <img src="https://img.shields.io/badge/WebGL-Bloom-FFC46B?style=flat-square&logo=webgl&logoColor=FFC46B&labelColor=0B0D12" alt="WebGL bloom" />
 <img src="https://img.shields.io/badge/Node.js-18+-67E8F9?style=flat-square&logo=nodedotjs&logoColor=67E8F9&labelColor=0B0D12" alt="Node.js 18+" />
-
-<br/><br/>
-
-<b>
-<a href="#-see-it-move">Demo</a> &nbsp;·&nbsp;
-<a href="#-the-gestures">Gestures</a> &nbsp;·&nbsp;
-<a href="#-features">Features</a> &nbsp;·&nbsp;
-<a href="#-how-it-works">How it works</a> &nbsp;·&nbsp;
-<a href="#-download">Download</a> &nbsp;·&nbsp;
-<a href="#-run-it-locally">Run locally</a>
-</b>
-
+</p>
+<sub>
+<a href="#-see-it-move">DEMO</a> &nbsp;✦&nbsp;
+<a href="#-the-gestures">GESTURES</a> &nbsp;✦&nbsp;
+<a href="#-features">FEATURES</a> &nbsp;✦&nbsp;
+<a href="#-how-it-works">HOW IT WORKS</a> &nbsp;✦&nbsp;
+<a href="#-download">DOWNLOAD</a> &nbsp;✦&nbsp;
+<a href="#-run-it-locally">RUN LOCALLY</a>
+</sub>
 </div>
-
-<br/>
 
 <img src="assets/divider.svg" width="100%" alt="" />
 
@@ -63,12 +47,19 @@ You don't need a headset, a controller or an account. Open the page, raise a han
 
 <table>
   <tr>
-    <td width="50%"><img src="assets/gesture-follow.svg" alt="Move your palm: the sphere follows your hand" width="100%" /></td>
-    <td width="50%"><img src="assets/gesture-pinch.svg" alt="Pinch then release: the dust compresses and explodes" width="100%" /></td>
+    <td width="33%"><img src="assets/gesture-follow.svg" alt="Show one open palm: the sphere follows your hand" width="100%" /></td>
+    <td width="33%"><img src="assets/gesture-pinch.svg" alt="Pinch: the dust collapses into a ball of light" width="100%" /></td>
+    <td width="33%"><img src="assets/gesture-scatter.svg" alt="Release the pinch: a big-bang burst" width="100%" /></td>
   </tr>
   <tr>
-    <td width="50%"><img src="assets/gesture-two-hands.svg" alt="Spread two hands: the sphere grows and shrinks" width="100%" /></td>
-    <td width="50%"><img src="assets/gesture-fist.svg" alt="Close your fist: scattered dust re-forms into a sphere" width="100%" /></td>
+    <td width="33%"><img src="assets/gesture-gather.svg" alt="Palm after scattering: dust swirls back to your hand" width="100%" /></td>
+    <td width="33%"><img src="assets/gesture-fist.svg" alt="Close your fist: the cloud snaps back into a sphere" width="100%" /></td>
+    <td width="33%"><img src="assets/gesture-two-hands.svg" alt="Two palms: hand distance sets the size" width="100%" /></td>
+  </tr>
+  <tr>
+    <td width="33%"><img src="assets/gesture-split.svg" alt="Two palms after scattering: one cloud per hand" width="100%" /></td>
+    <td width="33%"><img src="assets/gesture-clap.svg" alt="Bring palms together: merge, then spread to grow" width="100%" /></td>
+    <td width="33%"><img src="assets/gesture-camera.svg" alt="Press C: toggle the camera feed" width="100%" /></td>
   </tr>
 </table>
 
