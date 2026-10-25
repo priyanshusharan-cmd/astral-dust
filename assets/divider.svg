@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="28" viewBox="0 0 1280 28" role="img" aria-label="divider">
+<title>divider</title>
+
+<defs>
+  <linearGradient id="l" x1="0" x2="1">
+    <stop offset="0" stop-color="#FFC46B" stop-opacity="0"/>
+    <stop offset="0.5" stop-color="#FFC46B" stop-opacity="0.45"/>
+    <stop offset="1" stop-color="#FFC46B" stop-opacity="0"/>
+  </linearGradient>
+  <linearGradient id="glint" x1="0" x2="1">
+    <stop offset="0" stop-color="#FFEBC7" stop-opacity="0"/>
+    <stop offset="0.5" stop-color="#FFEBC7" stop-opacity="1"/>
+    <stop offset="1" stop-color="#FFEBC7" stop-opacity="0"/>
+  </linearGradient>
+</defs>
+<rect x="0" y="13.5" width="1280" height="1" fill="url(#l)"/>
+<rect y="13" width="180" height="2" fill="url(#glint)">
+  <animate attributeName="x" values="-180;1280" dur="6s" repeatCount="indefinite"/>
+</rect>
+<path d="M640,7 Q640,14 647,14 Q640,14 640,21 Q640,14 633,14 Q640,14 640,7Z" fill="#FFC46B">
+  <animateTransform attributeName="transform" type="rotate" from="0 640 14" to="90 640 14" dur="3s" repeatCount="indefinite"/>
+</path>
+<circle cx="618" cy="14" r="1.6" fill="#67E8F9"/>
+<circle cx="662" cy="14" r="1.6" fill="#67E8F9"/>
+</svg>
